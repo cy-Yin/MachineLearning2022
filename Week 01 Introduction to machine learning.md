@@ -13,7 +13,7 @@ input --> output label
 
 learns from being given "right answers"
 
-![[supervised learning input to output.png|500]]
+![|500](files/supervised%20learning%20input%20to%20output.png)
 
 我们数据集中的每个样本都有相应的“正确答案”，再根据这些样本作出预测
 
