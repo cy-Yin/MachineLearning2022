@@ -13,7 +13,7 @@ input --> output label
 
 learns from being given "right answers"
 
-![|500](files/supervised%20learning%20input%20to%20output.png)
+![|500](files/SupervisedLearningInputToOutput.png)
 
 我们数据集中的每个样本都有相应的“正确答案”，再根据这些样本作出预测
 
@@ -148,4 +148,67 @@ $$J(w,b) = \frac{1}{2m}\sum_{i=1}^{m}(\hat{y}^{(i)} - y^{(i)})^2 = \frac{1}{2m}\
 Cost function的可视化
 
 高维图（如$J(w,b)-w-b$组成的3D图）、等高线图
+
+## Gradient Descent 梯度下降
+
+Gradient Descent is an algorithm that you can use to try to **minimize any function**.
+
+Outline:
+1. Start with some $w$, $b$.
+2. Keep on changing the parameters $w$ and $b$ to reduce $J(w, b)$
+3. Until we settle at or near a minimum
+
+Gradient Descent只能找到局部最小值，而无法找到全局最小值
+
+### Gradient Descent Algorithm
+
+Repeat until convergence (which means you reach the minimum)
+$$
+\begin{align}
+w &= w-\alpha*\frac{\partial}{\partial w}J(w,b) \\
+b &= b-\alpha*\frac{\partial}{\partial b}J(w,b)
+\end{align}
+$$
+
+Here $\alpha$ is called the **Learning Rate**. $\alpha$ is always set between $0$ and $1$. $\alpha$ basically controls how big of a step you take downhill.
+
+For linear regression, we always choose
+$$
+J(w,b) =  \frac{1}{2m}\sum_{i=1}^{m}(f_{w,b}(x^{(i)}) - y^{(i)})^2
+$$
+and then $\frac{\partial J(w,b)}{\partial w}$ and $\frac{\partial J(w,b)}{\partial b}$ give
+$$
+\begin{align}
+\frac{\partial J(w,b)}{\partial w} &= \frac{1}{m}\sum_{i=1}^{m}(f_{w,b}(x^{(i)})-y^{(i)})x^{(i)} \\
+\frac{\partial J(w,b)}{\partial b} &= \frac{1}{m}\sum_{i=1}^{m}(f_{w,b}(x^{(i)})-y^{(i)})
+\end{align}
+$$
+
+You should **simultaneously** update $w$ and $b$, so correct the algorithm:
+$$
+\begin{align}
+tmp\_w &= w-\alpha*\frac{\partial}{\partial w}J(w,b) \\
+tmp\_b &= b-\alpha*\frac{\partial}{\partial b}J(w,b) \\
+w &= tmp\_w \\
+b &= tmp\_b
+\end{align}
+$$
+
+- If $\alpha$ is too small, gradient descent may be slow.
+- If $\alpha$ is too large, gradient descent may 
+	- overshoot, never reach minimum
+	- fail to converge, diverge
+
+![|325](files/LearningRate.png)
+
+Near a local minimum:
+- Derivative becomes smaller     
+- Update steps become smaller
+
+Can reach minimum without decreasing learning rate
+
+**"Batch" Gradient Descent**
+
+"Batch": Each step of gradient descent uses all the training examples instead of just a subset of the training data.
+
 
