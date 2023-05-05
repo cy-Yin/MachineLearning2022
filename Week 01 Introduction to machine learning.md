@@ -164,10 +164,10 @@ Gradient Descent只能找到局部最小值，而无法找到全局最小值
 
 Repeat until convergence (which means you reach the minimum)
 $$
-\begin{align}
+\begin{align*}
 w &= w-\alpha*\frac{\partial}{\partial w}J(w,b) \\
 b &= b-\alpha*\frac{\partial}{\partial b}J(w,b)
-\end{align}
+\end{align*}
 $$
 
 Here $\alpha$ is called the **Learning Rate**. $\alpha$ is always set between $0$ and $1$. $\alpha$ basically controls how big of a step you take downhill.
@@ -178,20 +178,20 @@ J(w,b) =  \frac{1}{2m}\sum_{i=1}^{m}(f_{w,b}(x^{(i)}) - y^{(i)})^2
 $$
 and then $\frac{\partial J(w,b)}{\partial w}$ and $\frac{\partial J(w,b)}{\partial b}$ give
 $$
-\begin{align}
+\begin{align*}
 \frac{\partial J(w,b)}{\partial w} &= \frac{1}{m}\sum_{i=1}^{m}(f_{w,b}(x^{(i)})-y^{(i)})x^{(i)} \\
 \frac{\partial J(w,b)}{\partial b} &= \frac{1}{m}\sum_{i=1}^{m}(f_{w,b}(x^{(i)})-y^{(i)})
-\end{align}
+\end{align*}
 $$
 
 You should **simultaneously** update $w$ and $b$, so correct the algorithm:
 $$
-\begin{align}
+\begin{align*}
 tmp\_w &= w-\alpha*\frac{\partial}{\partial w}J(w,b) \\
 tmp\_b &= b-\alpha*\frac{\partial}{\partial b}J(w,b) \\
 w &= tmp\_w \\
 b &= tmp\_b
-\end{align}
+\end{align*}
 $$
 
 - If $\alpha$ is too small, gradient descent may be slow.
