@@ -138,11 +138,12 @@ $$J(w,b) = \frac{1}{2m}\sum_{i=1}^{m}(\hat{y}^{(i)} - y^{(i)})^2 = \frac{1}{2m}\
 最后求解Cost function的最小值，对应的参数值就是我们要找的合适的参数值
 
 总结（以Linear Regression为例）：
+
 |  | |
 |:---:|:---:|
 |model|$f_{w,b}(x) = w*x+b$|
 |parameters|$w$,$b$|
-|cost function|$J(w,b) = \frac{1}{2m}\sum_{i=1}^{m}(f_{w,b}(x^{(i)}) - y^{(i)})^2$|
+|cost function|$J(w,b) = \frac{1}{2m}\sum\limits_{i=1}\limits^{m}(f_{w,b}(x^{(i)}) - y^{(i)})^2$|
 |goal|$\min\limits_{w,b} J(w,b)$|
 
 Cost function的可视化
