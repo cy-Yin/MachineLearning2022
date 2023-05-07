@@ -23,7 +23,7 @@ $n=4$，$m=5$，前四列分别为$x_0$、$x_1$、$x_2$、$x_3$，$\vec{x}^{(1)}
 
 Model:
 - previously: $f_{w,b}(x) = w * x + b$
-- now: $f_{\vec{w},b}(\vec{x}) = w_1 * x_1 + w_2 * x_2 + \cdots + w_n * x_n + b = \vec{w} * \vec{x} + b$，其中$\vec{w} = [w_1, w_2, \cdots, w_n]$，$\vec{x} = [x_1, x_2, \cdots, x_n]$
+- now: $f_{\vec{w},b}(\vec{x}) = w_1 * x_1 + w_2 * x_2 + \cdots + w_n * x_n + b = \vec{w} \cdot \vec{x} + b$，其中$\vec{w} = [w_1, w_2, \cdots, w_n]$，$\vec{x} = [x_1, x_2, \cdots, x_n]$
 
 **Multiple Linear Regression!!!**
 
@@ -47,7 +47,7 @@ for j in range(0, n):
 f = f + b
 ```
 
-With vectorization: $f_{\vec{w},b}(\vec{x}) = \vec{w} * \vec{x} + b$
+With vectorization: $f_{\vec{w},b}(\vec{x}) = \vec{w} \cdot \vec{x} + b$
 ```Python
 f = np.dot(w, x) + b
 ```
@@ -133,7 +133,7 @@ If gradient descent is working properly, the cost function $J(\vec{w}, b)$ shoul
 
 **Automatic convergence test**:
 
-Let $\epsilon$ be a very small number. if $j(\vec{w}, b)$ decreases by $\leq \epsilon$ in one iteration, then you can declare convergence and stop the gradient descent.
+Let $\epsilon$ be a very small number. if $J(\vec{w}, b)$ decreases by $\leq \epsilon$ in one iteration, then you can declare convergence and stop the gradient descent.
 
 ## Feature Engineering
 
