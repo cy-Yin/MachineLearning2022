@@ -72,12 +72,12 @@ $$
 - vector notation: simultaneously update
 $$
 \begin{align*}
-w_1 &= w_1 - \alpha * \frac{\partial}{\partial w_1} J(\vec{w}, b) = w_1 - \alpha * \frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)}-y^{(i)})x_1^{(i)} \\
-w_2 &= w_2 - \alpha * \frac{\partial}{\partial w_2} J(\vec{w}, b) = w_2 - \alpha * \frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)}-y^{(i)})x_2^{(i)}\\
-w_3 &= w_3 - \alpha * \frac{\partial}{\partial w_3} J(\vec{w}, b) = w_3 - \alpha * \frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)}-y^{(i)})x_3^{(i)}\\
+w_1 &= w_1 - \alpha * \frac{\partial}{\partial w_1} J(\vec{w}, b) = w_1 - \alpha * \frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})x_1^{(i)} \\
+w_2 &= w_2 - \alpha * \frac{\partial}{\partial w_2} J(\vec{w}, b) = w_2 - \alpha * \frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})x_2^{(i)}\\
+w_3 &= w_3 - \alpha * \frac{\partial}{\partial w_3} J(\vec{w}, b) = w_3 - \alpha * \frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})x_3^{(i)}\\
 & \cdots \\
-w_n &= w_n - \alpha * \frac{\partial}{\partial w_n} J(\vec{w}, b) = w_n - \alpha * \frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)}-y^{(i)})x_n^{(i)}\\
-b &= b - \alpha * \frac{\partial}{\partial b} J(\vec{w}, b) = b - \alpha * \frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)}-y^{(i)})
+w_n &= w_n - \alpha * \frac{\partial}{\partial w_n} J(\vec{w}, b) = w_n - \alpha * \frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})x_n^{(i)}\\
+b &= b - \alpha * \frac{\partial}{\partial b} J(\vec{w}, b) = b - \alpha * \frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})
 \end{align*}
 $$
 

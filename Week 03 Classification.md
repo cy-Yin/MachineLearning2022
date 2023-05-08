@@ -39,7 +39,7 @@ Set $0.5$ as the **threshold**. Is $f_{\vec{w},b}(\vec{x}) \geq 0.5$ (or $z = \v
 
 Decision boundary 定义为 $z = \vec{w} \cdot \vec{x} + b = 0$
 
-### Cost function for Logistic Regression
+## Cost function for Logistic Regression
 
 recall the cost function for linear regression:
 $$J(\vec{w},b) = \frac{1}{2m}\sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})^2$$
@@ -86,9 +86,67 @@ $$J(\vec{w},b) = \frac{1}{m} \sum_{i=1}^{m}\mathcal{L}(f_{\vec{w},b}(\vec{x}^{(i
 
 此时新的Cost function就变为一个平滑的凸函数，易于进行gradient descent
 
-![|625](files/Pasted%20image%2020230507222644.png)
+![|625](files/LogisticCostFunctionNewAndOld.png)
 
 （*注：其中左边是新的Cost function，可以看到非常平滑；右边是由之前的平方误差函数做出的Cost function，波动大，到处是局部最小值，不利于梯度下降*）
 
 ### Simplified Cost Function
+
+因为$y^{(i)}$不是$1$就是$0$的二元输出，可以重新简化Loss function。
+the Simplified Cost Function is
+$$\mathcal{L}(f_{\vec{w},b}(\vec{x}^{(i)}),y^{(i)})=
+-y^{(i)} * \log(f_{\vec{w},b}(\vec{x}^{(i)})) -(1-y^{(i)}) * \log(1 - f_{\vec{w},b}(\vec{x}^{(i)}))$$
+
+则整体的Simplified Cost Function可以写为
+$$
+\begin{align*}
+J(\vec{w},b) & = \frac{1}{m} \sum_{i=1}^{m}\mathcal{L}(f_{\vec{w},b}(\vec{x}^{(i)}),y^{(i)})  \\
+& = -\frac{1}{m} \sum_{i=1}^{m}[y^{(i)} * \log(f_{\vec{w},b}(\vec{x}^{(i)})) + (1-y^{(i)}) * \log(1 - f_{\vec{w},b}(\vec{x}^{(i)}))]
+\end{align*}
+$$
+
+## Gradient Descent Implementation
+
+回忆梯度下降法的算法为
+$$
+\begin{align*}
+w_1 &= w_1 - \alpha * \frac{\partial}{\partial w_1} J(w_1, w_2, \cdots w_n, b) \\
+w_2 &= w_2 - \alpha * \frac{\partial}{\partial w_2} J(w_1, w_2, \cdots w_n, b) \\
+w_3 &= w_3 - \alpha * \frac{\partial}{\partial w_3} J(w_1, w_2, \cdots w_n, b) \\
+& \cdots \\
+w_n &= w_n - \alpha * \frac{\partial}{\partial w_n} J(w_1, w_2, \cdots w_n, b) \\
+b &= b - \alpha * \frac{\partial}{\partial b} J(w_1, w_2, \cdots w_n, b)
+\end{align*}
+$$
+带入Cost function的形式
+$$J(\vec{w},b) = -\frac{1}{m} \sum_{i=1}^{m}[y^{(i)} * \log(f_{\vec{w},b}(\vec{x}^{(i)})) + (1-y^{(i)}) * \log(1 - f_{\vec{w},b}(\vec{x}^{(i)}))]$$
+
+这里我们可以计算出
+$$
+\begin{align*}
+w_j &= w_j - \alpha * \frac{\partial}{\partial w_j} J(\vec{w}, b) = w_n - \alpha * \frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})x_j^{(i)}\\
+b &= b - \alpha * \frac{\partial}{\partial b} J(\vec{w}, b) = b - \alpha * \frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})
+\end{align*}
+$$
+*注意：这个迭代形式上与线性回归完全相同，只是选用的模型$f_{\vec{w},b}(\vec{x})$不同*
+
+Same concepts of the logistic regression as the linear regression:
+- Monitor gradient descent (learning curve)
+- Vectorized implementation
+- Feature scaling
+
+## The Problem of Overfitting
+
+overfitting(过拟合) and underfitting(欠拟合)
+
+- underfitting -- "high bias"
+- overfitting -- "high variance"
+
+![|650](files/OverfittingAndUnderfitting.png)
+
+When you think overfitting has occurred, what can you do to address it? 
+all features + insufficient data = Overfit !!!
+1. Collect more training examples
+2. Select features to include/exclude (also called "**feature selection**")
+3. Regularization 正则化 (reduce size of parameters) —— encourage the learning algorithm to shrink the values of the parameters without necessarily demanding that the parameter is set to exactly $0$. 与第二步不同，第二步相当于直接将某个参数设置为$0$，而正则化使一些参数减小以优化拟合函数，但是不要求直接减小到$0$。*注意：一般正则化只要求对$w_j$参数的大小进行减小，而不改变参数$b$的大小*
 
