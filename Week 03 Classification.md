@@ -2,11 +2,11 @@
 
 Linear Regression 不是一个解决 Classification 问题的好方法，我们需要用到 逻辑回归（Logistic Regression）。
 
-"binary classifcation" 二元分类：$y$ can only be one of the **two** values
+"binary classification" 二元分类：$y$ can only be one of the **two** values
 
 the two classes:
 - false, $0$, "negative class"
-- ture, $1$, "positive class"
+- true, $1$, "positive class"
 
 ## Logistic Regression
 

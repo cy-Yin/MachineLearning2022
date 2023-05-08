@@ -1,6 +1,6 @@
 ## 什么是机器学习
 
-在进行特定编程的情况下，给予计算机学习能力的领域。 —— Arthur Samual
+在进行特定编程的情况下，给予计算机学习能力的领域。 —— Arthur Samuel
 
 主要两种类型的机器学习算法
 - supervised learning

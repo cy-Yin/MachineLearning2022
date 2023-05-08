@@ -17,7 +17,7 @@ deeplearning.ai 提供
 - Linear regression model
 - Cost function formula
 - Cost function intuition
-- Visualing the cost function
+- Visualizing the cost function
 - Visualization examples 
 - Gradient descent
 - Implementing gradient descent
@@ -26,11 +26,11 @@ deeplearning.ai 提供
 
 *Practice quiz: Supervised vs unsupervised learning
 Practice quiz: Regression
-Practice quiz: Train the model with gradient descent10分钟*
+Practice quiz: Train the model with gradient descent*
 
 ### Week 02 Regression with multiple input variables
 
-- Mutiple features
+- Multiple features
 - Vectorization
 - Gradient descent for multiple linear regression
 - Feature scaling
