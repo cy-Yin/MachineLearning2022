@@ -8,7 +8,7 @@ the two classes:
 - false, $0$, "negative class"
 - true, $1$, "positive class"
 
-## Logistic Regression
+## Logistic Regression 逻辑回归
 
 ### sigmoid function 
 
@@ -145,8 +145,98 @@ overfitting(过拟合) and underfitting(欠拟合)
 ![|650](files/OverfittingAndUnderfitting.png)
 
 When you think overfitting has occurred, what can you do to address it? 
-all features + insufficient data = Overfit !!!
+all features + insufficient data = Overfitting !!!
 1. Collect more training examples
 2. Select features to include/exclude (also called "**feature selection**")
 3. Regularization 正则化 (reduce size of parameters) —— encourage the learning algorithm to shrink the values of the parameters without necessarily demanding that the parameter is set to exactly $0$. 与第二步不同，第二步相当于直接将某个参数设置为$0$，而正则化使一些参数减小以优化拟合函数，但是不要求直接减小到$0$。*注意：一般正则化只要求对$w_j$参数的大小进行减小，而不改变参数$b$的大小*
 
+## Regularization 正则化
+
+Regularization to reduce overfitting 
+
+For example
+
+考虑一组数据，将使用Linear Regression。使用$f_{\vec{w},b}(x) = w_1 x+w_2 x^2 + b$二次函数拟合正好，此时如果使用$f_{\vec{w},b}(x) = w_1 x + w_2 x^2 + w_3 x^3 + w_4 x^4 + b$四次函数拟合就会出现过拟合状态。
+
+此时我们要 make $w_3$, $w_4$ really small ($\approx 0$)
+
+我们只要在 Cost function 后增加两项，引入奖励/惩罚机制
+$$\min_{\vec{w},b}\ J(\vec{w}, b) = \min_{\vec{w},b}\ \frac{1}{2m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)}) - y^{(i)})^2 + \boldsymbol{1000 w_3^2 + 1000 w_4^2}$$
+
+为了达到最小值，函数在调节参数的值时会尽量取$w_3、w_4\approx 0$，则此时函数就更接近于二次函数。
+
+The idea of Regularization is that if there are smaller values for the parameters, then that is a bit like having a simpler model, maybe one with fewer features, which is therefore less prone to overfitting.
+
+这个例子中，我们惩罚(penalize)了参数$w_3$和$w_4$，但是实际情况中我们并不知道要简化掉哪些特征更有利。
+因此，通常实现Regularization的方式是**先惩罚所有特征**。
+
+在 Cost function $J(\vec{w},b)$ 的后面添加一个新项
+$$\frac{\lambda}{2m}\sum_{j=1}^{n}w_j^2$$
+
+此时适用于 Linear Regression 的 Cost function 变为
+$$J(\vec{w},b) = \frac{1}{2m}\sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})^2 + \frac{\lambda}{2m}\sum_{j=1}^{n}w_j^2$$
+
+$\lambda$ is also called the **regularization parameter**（正则化参数）
+
+$\lambda$ balances the both goals that fitting data and keeping $w_j$ small.
+
+### Regularized Linear Regression
+
+for Linear Regression:
+$$J(\vec{w},b) = \frac{1}{2m}\sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})^2 + \frac{\lambda}{2m}\sum_{j=1}^{n}w_j^2$$
+
+带入梯度下降法
+$$
+\begin{align*}
+w_1 &= w_1 - \alpha * \frac{\partial}{\partial w_1} J(w_1, w_2, \cdots w_n, b) \\
+w_2 &= w_2 - \alpha * \frac{\partial}{\partial w_2} J(w_1, w_2, \cdots w_n, b) \\
+w_3 &= w_3 - \alpha * \frac{\partial}{\partial w_3} J(w_1, w_2, \cdots w_n, b) \\
+& \cdots \\
+w_n &= w_n - \alpha * \frac{\partial}{\partial w_n} J(w_1, w_2, \cdots w_n, b) \\
+b &= b - \alpha * \frac{\partial}{\partial b} J(w_1, w_2, \cdots w_n, b)
+\end{align*}
+$$
+
+可得
+$$
+\begin{align*}
+w_j & = w_j - \alpha * [\frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})x_j^{(i)} + \frac{\lambda}{m}w_j] \\
+b & = b - \alpha * [\frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})]
+\end{align*}
+$$
+
+其中第一个式子也可以写为
+$$w_j = (1 - \alpha \frac{\lambda}{m})w_j - \alpha * \frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})x_j^{(i)}$$
+
+这里$\alpha$是一个非常小的数，$\lambda$通常也是一个很小的数，$m$是样本数量通常很大；
+最终$(1-\alpha \frac{\lambda}{m})$是一个小于$1$但是非常接近$1$的数 (shrink $w_j$ just a little bit on every iteration)。
+
+### Regularized Logistic Regression
+
+由 Logistic Regression 的 Cost function:
+$$J(\vec{w},b) = -\frac{1}{m} \sum_{i=1}^{m}[y^{(i)} * \log(f_{\vec{w},b}(\vec{x}^{(i)})) + (1-y^{(i)}) * \log(1 - f_{\vec{w},b}(\vec{x}^{(i)}))]$$
+
+正则化就是在后面再增加一项：
+$$J(\vec{w},b) = -\frac{1}{m} \sum_{i=1}^{m}[y^{(i)} * \log(f_{\vec{w},b}(\vec{x}^{(i)})) + (1-y^{(i)}) * \log(1 - f_{\vec{w},b}(\vec{x}^{(i)}))] + \frac{\lambda}{2m}\sum_{j=1}^{n}w_j^2$$
+
+带入梯度下降法
+$$
+\begin{align*}
+w_1 &= w_1 - \alpha * \frac{\partial}{\partial w_1} J(w_1, w_2, \cdots w_n, b) \\
+w_2 &= w_2 - \alpha * \frac{\partial}{\partial w_2} J(w_1, w_2, \cdots w_n, b) \\
+w_3 &= w_3 - \alpha * \frac{\partial}{\partial w_3} J(w_1, w_2, \cdots w_n, b) \\
+& \cdots \\
+w_n &= w_n - \alpha * \frac{\partial}{\partial w_n} J(w_1, w_2, \cdots w_n, b) \\
+b &= b - \alpha * \frac{\partial}{\partial b} J(w_1, w_2, \cdots w_n, b)
+\end{align*}
+$$
+
+可得
+$$
+\begin{align*}
+w_j & = w_j - \alpha * [\frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})x_j^{(i)} + \frac{\lambda}{m}w_j] \\
+b & = b - \alpha * [\frac{1}{m} \sum_{i=1}^{m}(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})]
+\end{align*}
+$$
+
+和 Linear Regression 看起来完全一致，除了 $f_{\vec{w},b}$ 与 Linear regression 的不同。
