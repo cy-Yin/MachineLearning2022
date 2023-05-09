@@ -49,7 +49,9 @@ $$a_j^{[l]} = g(\vec{w}_j^{[l]} \cdot \vec{a}^{[l-1]} + b_j^{[l]})$$
 
 ## Inference: making predictions (forward propagation 前向传播)
 
+```
 layer 1 --> layer 2 --> layer 3 --> ......
+```
 
 以 手写数字识别 为例（暂时只识别0和1）
 
