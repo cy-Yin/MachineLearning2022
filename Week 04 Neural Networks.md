@@ -61,3 +61,122 @@ layer 1 --> layer 2 --> layer 3 --> ......
 
 $a_\text{output} = f(\vec{x}_\text{input})$，用 $f$ 来表示线性回归或逻辑回归的输出。
 
+## Code (tensorflow):
+
+如果要构建下图所示的神经网络：
+![|275](files/NeuralNetworkExample.png)
+
+```Python
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.layers import Dense
+
+
+x = np.array([[200.0, 17.0]]) # layer 0 : input
+
+layer_1 = Dense(units=3, activation='sigmoid') # layer 1
+a_1 = layer_1(x)
+
+layer_2 = Dense(units=1, activation='sigmoid') # layer 2
+a_2 = layer_2(a_1)
+
+if a_2 >= 0.5:
+	yhat = 1
+else:
+	yhat = 0
+```
+
+### Data in Tensorflow
+
+```Python
+x = np.array([[200.0, 17.0]])
+```
+
+为什么有双重中括号？
+为了创建一个$1\times2$的矩阵
+
+```shell
+>>> x = np.array([[200.0, 17.0]])
+>>> print("x.shape = ", x.shape)
+x.shape = (1, 2)
+>>> x1 = np.array([200.0, 17.0])
+>>> print("x1.shape = ", x1.shape)
+x1.shape = (2,)
+```
+
+可以看到，x是一个$1\times2$的矩阵，而x1则是一个长度为2的没有行或列的数组
+
+在Linear Regression和Logistic Regression中，我们用1维数组来表示数据；但是在Tensorflow中，惯例是使用矩阵来表示数据。
+
+然后来看激活值a_1和a_2的数据形式。
+```shell
+>>> x = np.array([[200.0, 17.0]]) # layer 0 : input
+>>> layer_1 = Dense(units=3, activation='sigmoid') # layer 1
+>>> a_1 = layer_1(x)
+>>> a_1
+<tf.Tensor: shape=(1, 3), dtype=float32, numpy=array([[1.0000000e+00, 2.9153221e-38, 1.0000000e+00]], dtype=float32)>
+>>> a_1.numpy()
+array([[1.0000000e+00, 2.9153221e-38, 1.0000000e+00]], dtype=float32)
+>>> layer_2 = Dense(units=1, activation='sigmoid') # layer 2
+>>> a_2 = layer_2(a_1)
+>>> a_2
+<tf.Tensor: shape=(1, 1), dtype=float32, numpy=array([[0.62423503]], dtype=float32)>
+>>> a_2.numpy()
+array([[0.62423503]], dtype=float32)
+```
+
+这里a_1是一个$1 \times 3$的矩阵，在Tensorflow中以张量形式表示。张量是Tensorflow创建的一种数据类型，用于有效地存储和执行矩阵计算。a_2是一个$1 \times 1$的矩阵。
+
+### Building a neural network
+
+之前是一层一层构建神经网络层，下面介绍另一种构建神经网络的方法。
+
+```Python
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.layers import Dense
+from tensorflow.keras import Sequential
+
+layer_1 = Dense(units=3, activation='sigmoid') # layer 1
+layer_2 = Dense(units=1, activation='sigmoid') # layer 2
+model = Sequential([layer_1, layer_2])
+```
+
+这里将layer_1和layer_2按照顺序串在一起形成一个神经网络。
+
+整个tensorflow构建神经网络的流程可以写为
+```Python
+x = np.array([200.0, 17.0],
+			 [120.0, 5.0],
+			 [425.0, 20.0],
+			 [212.0, 18.0]) # inputs
+y = np.array([1, 0, 0, 1]) # targets
+
+layer_1 = Dense(units=3, activation='sigmoid') # layer 1
+layer_2 = Dense(units=1, activation='sigmoid') # layer 2
+model = Sequential([layer_1, layer_2])
+
+# train the neural network
+model.compile(...) # compile this model
+model.fit(x, y) # fit the data x and y
+
+# input a new x and predict through the neural network
+model.predict(x_new)
+```
+
+或者可以写得更加紧凑一点
+```Python
+model = Sequential([
+	Dense(units=3, activation='sigmoid') # layer 1
+	Dense(units=1, activation='sigmoid') # layer 2
+])
+```
+
+### Forward prop in a single layer
+
+![|625](files/ForwardPropCoffeeRoastingModel.png)
+
+### General implementation of forward propagation
+
+![|625](files/GeneralImplementationOfForwardPropagation.png)
+
