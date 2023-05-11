@@ -180,3 +180,7 @@ model = Sequential([
 
 ![|625](files/GeneralImplementationOfForwardPropagation.png)
 
+### Neural networks can be vectorized
+
+![|625](files/LoopsVSVectorization.png)
+
