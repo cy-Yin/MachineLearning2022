@@ -93,3 +93,175 @@ Don't use linear activation function in hidden layers (using ReLU activation fun
 
 Softmax Regression 是logistic regression的推广，它可以用来解决多分类问题，划分两个以上的类别的决策边界。
 
+### Softmax algorithm
+
+回顾二元分类问题时，我们采用logistic regression
+$$
+\begin{align*}
+z & = \vec{w} \cdot \vec{x} + b \\
+a & = g(z) = \frac{1}{1 + e^{-z}} = \mathcal{P}(y = 1 | \vec{x})
+\end{align*}
+$$
+这里如果看作二元分类，输出为0或1，上面的$a$还可以写为
+$$
+\begin{align*}
+a_1 & = g(z) = \frac{1}{1 + e^{-z}} = \mathcal{P}(y = 1 | \vec{x}) \\ 
+a_2 & = 1 - a_1 = \mathcal{P}(y = 0 | \vec{x})
+\end{align*}
+$$
+
+如果现在是四元分类问题，输出值有$y=1, 2, 3, 4$，则使用Softmax算法
+$$
+\begin{align*}
+z_1 & = \vec{w}_1 \cdot \vec{x} + b_1 \\
+z_2 & = \vec{w}_2 \cdot \vec{x} + b_2 \\
+z_3 & = \vec{w}_3 \cdot \vec{x} + b_3 \\
+z_4 & = \vec{w}_4 \cdot \vec{x} + b_4 \\
+a_1 & = \frac{e^{z_1}}{e^{z_1} + e^{z_2} + e^{z_3} + e^{z_4}} = \mathcal{P}(y = 1 | \vec{x}) \\
+a_2 & = \frac{e^{z_2}}{e^{z_1} + e^{z_2} + e^{z_3} + e^{z_4}} = \mathcal{P}(y = 2 | \vec{x}) \\
+a_3 & = \frac{e^{z_3}}{e^{z_1} + e^{z_2} + e^{z_3} + e^{z_4}} = \mathcal{P}(y = 3 | \vec{x}) \\
+a_4 & = \frac{e^{z_4}}{e^{z_1} + e^{z_2} + e^{z_3} + e^{z_4}} = \mathcal{P}(y = 4 | \vec{x})
+\end{align*}
+$$
+
+推广到$N$分类问题（输出值有$y = 1, 2, 3, 4, \dots, N$）
+$$
+\begin{align*}
+z_j & = \vec{w}_j \cdot \vec{x} + b_j & \text{for}\ \ j=1\ \text{to}\ N \\
+a_j & = \frac{e^{z_j}}{\sum_{k=1}^{N} e^{z_k}} = \mathcal{P}(y = j | \vec{x}) & \text{for}\ \ j=1\ \text{to}\ N
+\end{align*}
+$$
+
+这里有$2N$个参数 $\vec{w}_1, \vec{w}_2, \dots, \vec{w}_N,\  b_1, b_2, \dots, b_N$
+
+*注：这里的$\vec{w}_1$是一个向量，而不是$w$的某个分量，这里$w$也不是一个向量，而可以由$\vec{w}_1, \vec{w}_2, \dots, \vec{w}_N$并成一个矩阵*
+
+*注意这里的$a_1$不仅仅是$z_1$的函数，而是$z_1, z_2, \dots, z_N$的函数*
+
+回忆logistic regression的loss function定义为
+$$
+\begin{align*}
+\mathcal{L}(f_{\vec{w},b}(\vec{x}^{(i)}),y^{(i)}) & = -y * \log(a_1) - (1-y) * \log(1 - a_1) \\
+& =
+\left
+\{
+\begin{aligned} 
+& -\log(f_{\vec{w},b}(\vec{x}^{(i)})) & \text{if}\ \ y^{(i)} = 1 \\ 
+& -\log(1 - f_{\vec{w},b}(\vec{x}^{(i)})) & \text{if}\ \ y^{(i)} = 0 \\
+\end{aligned} 
+\right. \\
+& =
+\left
+\{
+\begin{aligned} 
+& -\log(a_1) & \text{if}\ \ y = 1 \\ 
+& -\log(a_2) & \text{if}\ \ y = 0 \\
+\end{aligned} 
+\right. 
+\end{align*}
+$$
+
+则Softmax的loss function也可以定义为
+$$
+\mathcal{L}(a_1, a_2, \dots, a_N, y) =
+\left
+\{
+\begin{aligned} 
+& -\log(a_1) & \text{if}\ \ y = 1 \\ 
+& -\log(a_2) & \text{if}\ \ y = 2 \\
+& -\log(a_3) & \text{if}\ \ y = 3 \\
+& \qquad \dots \\
+& -\log(a_N) & \text{if}\ \ y = N
+\end{aligned} 
+\right. 
+$$
+
+### Neural Network with Softmax output
+
+如果我们进行$N$分类问题，相较于二元分类问题输出层使用一个神经元，并使用sigmoid激活函数，现在我们改用有$N$个神经元的输出层，并使用Softmax输出，这个输出层又叫做Softmax层。
+
+![|650](files/NeuralNetworkWithSoftmaxOutput.png)
+
+下面在Tensorflow上实现这个神经网络
+
+```Python
+import tensorflow as tf
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.losses import SparseCategoricalCrossentropy
+
+# Specify the model f_{w,b}(x)
+model = Sequential([
+	Dense(units=25, activation='relu')
+	Dense(units=15, activation='relu')
+	Dense(units=10, activation='softmax')
+])
+
+# Specify loss and cost L(f_{w,b}(x), y)
+model.compile(loss=SparseCategoricalCrossentropy())
+
+# Train on data to minimize J(w,b)
+model.fit(X, Y, epochs=100)
+```
+
+对于多分类问题，我们使用`SparseCategoricalCrossentropy()`作为loss function。category表明这是一个分类问题，sparse表明$y$只能取$N$个值之一（还记得二元分类问题中使用logistic regression，我们用的loss function是`BinaryCrossentropy()`函数）
+
+*注：上面这段代码不要用在真实编写神经网络上，因为有更好的代码版本，下面会接触到。*
+
+### Improved implementation of Softmax
+
+上面的代码版本会产生较大的数值浮点误差
+
+![|650](files/NumericalRoundoffErrors.png)
+
+如上图所示，在logistic regression中，如果不使用$a$作为中间值，而是直接代入loss function（也可以认为选择了线性激活函数而非Sigmoid函数，并改造了loss function的形式，在代码中即对应`loss=BinaryCrossEntropy(from_logits=True)`），最终tensorflow会给出一个更加精确的结果。
+
+在Softmax regression中，同理可以直接写入loss function中而不使用中间值
+
+![|650](files/MoreNumericallyAccurateImplementationOfSoftmax.png)
+
+其改造代码如下
+
+```Python
+import tensorflow as tf
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.losses import SparseCategoricalCrossentropy
+
+# Specify the model f_{w,b}(x)
+model = Sequential([
+	Dense(units=25, activation='relu')
+	Dense(units=15, activation='relu')
+	Dense(units=10, activation='linear')
+])
+
+# Specify loss and cost L(f_{w,b}(x), y)
+model.compile(loss=SparseCategoricalCrossentropy(from_logits=True))
+
+# Train on data to minimize J(w,b)
+model.fit(X, Y, epochs=100)
+
+# predict
+logits = model(X)
+f_x = tf.nn.softmax(logits)
+```
+
+由于loss function直接代入的是$z$的值，而非$a=g(z)$的值，最后输出的也只是$z$而非$g(z)$即我们想要的概率，所以要多加最后一段，使其能够预测概率。
+
+### Multi-label Classification 多标签分类问题
+
+multi-label classification 与 multi-class classification 不同，后者是指输出值有多个的分类问题，如分辨数字0~9；
+前者是多标签分类问题，典型例子是给一张图片，判断图上Is there a car? Is there a bus? Is there a pedestrian?，输入一张图片，有多个标签（是否有车、是否有行人等等），即对应的$y$是一个多标签组成的向量。
+
+如何解决多标签分类问题？
+
+一种方法是独立看每一个标签，将整个问题拆分成多个完全独立的机器学习问题。
+
+或者，还有一种方法自然是构建一个有多个输出的神经网络。
+
+![|650](files/MultipleClasses.png)
+
+*注：这里使用Sigmoid激活函数而不是Softmax激活函数，是因为本质上这是三个二元分类问题，而非一个多元分类问题*
+
+## Advanced Optimization
+
