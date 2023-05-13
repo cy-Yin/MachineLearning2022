@@ -29,7 +29,7 @@ $$f_{\vec{w},b}(\vec{x}) = g(\vec{w}\cdot\vec{x} + b) = \frac{1}{1 + e^{-(\vec{w
 What the logistic regression model does is it inputs features or set of features $X$ and outputs a number between $0$ and $1$.
 
 可以认为逻辑回归模型输出的是概率 the "probability" that class is $1$, given input $\vec{x}$, parameters $\vec{w}$, $b$
-$$f_{\vec{w},b}(\vec{x}) = P(y = 1|\vec{x};\vec{w},b)$$
+$$f_{\vec{w},b}(\vec{x}) = \mathcal{P}(y = 1|\vec{x};\vec{w},b)$$
 
 Set $0.5$ as the **threshold**. Is $f_{\vec{w},b}(\vec{x}) \geq 0.5$ (or $z = \vec{w}\cdot\vec{x} + b \geq 0$) ?
 - Yes: $\hat{y} = 1$

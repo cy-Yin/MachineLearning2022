@@ -263,5 +263,87 @@ multi-label classification 与 multi-class classification 不同，后者是指�
 
 *注：这里使用Sigmoid激活函数而不是Softmax激活函数，是因为本质上这是三个二元分类问题，而非一个多元分类问题*
 
-## Advanced Optimization
+## Advanced Optimization —— Adam algorithm
 
+除了梯度下降算法，还有一些优化算法用于最小化成本函数。
+
+其中一个是 “Adam” algorithm。
+
+其本质是在梯度下降进展顺利时（直接向最小值前进），增大学习率$\alpha$，使得最小化的过程更快；而当梯度下降进展不顺利时（如左右横跳着下降），就减小学习率$\alpha$。
+
+![|600](files/AdamAlgorithm.png)
+
+Adam算法可以自动调整学习率，“Adam”代表 Adaptive Moment estimation
+
+Adam算法并没有使用单一的全局学习率$\alpha$，而是对模型的每一个参数使用不同的学习率
+
+Adam算法的tensorflow实现如下
+
+```Python
+import tensorflow as tf
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.losses import SparseCategoricalCrossentropy
+from tensorflow.keras.optimizers import Adam # Adam algorithm
+
+# Specify the model f_{w,b}(x)
+model = Sequential([
+	Dense(units=25, activation='sigmoid')
+	Dense(units=15, activation='sigmoid')
+	Dense(units=10, activation='linear')
+])
+
+# Specify loss and cost L(f_{w,b}(x), y)
+model.compile(optimizer=Adam(learning_rate=1e-3)
+			  loss=SparseCategoricalCrossentropy(from_logits=True))
+
+# Train on data to minimize J(w,b)
+model.fit(X, Y, epochs=100)
+
+# predict
+logits = model(X)
+f_x = tf.nn.softmax(logits)
+```
+
+这里设置Adam算法的初始学习率为 $\alpha=1 \times 10^{-3}$
+
+## Additional Layer Types
+
+到目前为止所有的层都是dense layer类型，其中层中的每个神经元都得到它输入上一层的所有激活（Each neuron output is a function of all the activation outputs of the previous layer）。
+
+下面介绍一个其它类型的神经网络层 —— 卷积层 Convolutional layer
+
+Each Neuron only looks at part of the previous layer's inputs.
+
+Why?
+- Faster computation
+- Need less training data (less prone to overfitting)
+
+如果一个神经网络中有多个卷积层，这个神经网络也可以成为**卷积神经网络**(Convolutional Neural Network)
+
+![|600](files/ConvolutionalNeuralNetwork.png)
+
+## Derivative —— Back propagation
+
+使用Sympy包计算导数
+
+```Python
+import sympy
+
+J, w = sympy.symbols('J,w')
+J = w**2
+dJ_dw = sympy.diff(J,w) # calculate the derivative
+dJ_dw.subs([(w,2)]) # calculate the derivative of J(w) at w=2
+```
+
+### Computation Graph
+
+![|600](files/ComputationGraph.png)
+
+相比于前向传播是从左到右的计算，计算导数时选择从右到左计算，所以也叫反向传播。
+
+![|600](files/ComputationGraph2.png)
+
+Backprop is an efficient way to compute derivatives. Why?
+
+If $N$ nodes and $P$ parameters, compute derivatives in roughly $N + P$ steps rather than $N \times P$ steps.
