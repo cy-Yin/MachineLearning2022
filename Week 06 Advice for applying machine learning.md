@@ -238,3 +238,70 @@ A --> B --> C --> A
 如果交叉验证集较大，misclassified的样本数可能较多，这时可以从中随机挑选出**部分样本**组成一个子集，然后提取它们的共同特征。
 
 总结来说，error analysis做的事就是focusing attention on the more promising things to try.
+
+### Adding data
+
+增加数据主要有两种方式。
+
+1. data augmentation 数据增强
+
+modifying an existing training example to create a new training example.
+
+比如对于分辨数字，可以将数据集调整如下。比如对数字1的图片，可以旋转1，放大或缩小1，改变整张图片的颜色，改变整张图片的对比度等等，将图片1放入网格中并随机扭曲网格改变1的形状，但是输出标签仍然是1。这样就增加了数据集的大小。
+
+注意：Distortion introduced should be representation of the type of noise/distortions in the test set. Usually does not help to add purely random/meaningless noise to your data.
+
+2. data synthesis 数据合成
+
+using artificial data inputs to create a brand new training example.
+
+比如数字识别，可以利用计算机系统中的不同字体，通过调整背景，创造出大量有用的含有数字的图片，以便计算机进行识别。
+
+![|600](files/EngineerDataUsedByYourSystem.png)
+
+### Transfer learning 迁移学习
+
+using data from a different task
+
+如果一些应用程序没有那么多数据，而且也很难获得更多数据，此时**迁移学习**提出可以从几乎不相关的任务中获取数据。
+
+比如识别数字0~9，但是没有足够的数字图片。此时可以拿一个训练好的可以分辨其他物品（比如猫、狗、车、人等1000类事务）的神经网络，直接继承中间层除了最后一层输出层的所有参数，而最后一层输出层设置为有10个值的参数向量，来分辨0~9，此时只需要训练最后一层的参数即可，也可以将前边的参数值作为初始值训练所有参数，此时收敛也会很快。
+
+迁移学习的想法是希望将已有的神经网络的前几层的参数传递给性的神经网络，使得新神经网络已经学会了初步完成一些任务，从一个更优的初始位置进行进一步训练以完成预期要达到的目标。
+
+其中，训练已有的神经网络并将其参数传递到新的神经网络称为**监督预训练**(supervised pretraining)，而在新的神经网络上训练参数称为**微调**(Fine tuning)。
+
+![|600](files/TransferLearning.png)
+
+这是因为对于不同但是相近的任务，神经网络的前几层所做的事是差不多的。比如已有的神经网络拥有分辨猫、狗、车、人等1000类事务，它的第一层可能是检测边缘，第二层可能是检测转角，第三层可能是检测曲线，第四层可能是检测基本的形状等等，这在分辨数字的神经网络中也是一样的操作，所以可以借鉴已有的神经网络所训练好的参数。
+
+注意：已有的神经网络不是随意选择的，需要与新的神经网络有相同的input type，需要任务最好相近，比如都是计算机视觉中的分辨事务等等。
+
+Transfer learning summary
+1. Download neural network parameters pretrained on a large dataset with same input type (e.g., images, audio, text) as your application (or train your own).
+2. Further train (fine tune) the network on your own data.
+
+### Full cycle of a machine learning project
+
+```mermaid
+graph TD
+
+A("Scope project <br> (Define project)")
+B("Collect data <br> (Define and collect data)")
+C("Train model <br> (Training, error analysis <br> & iterative improvement)")
+D("Deploy in production <br> (Deploy, monitor and <br> maintain system)")
+E{Audit system}
+
+A --> B 
+B --> C
+C --> B
+C --> D
+D --> C
+D --> B
+E ---> D
+```
+
+Deployment 生产环境中部署你的神经网络模型
+
+![|600](files/Deployment.png)
+
