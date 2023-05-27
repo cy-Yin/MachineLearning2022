@@ -305,3 +305,73 @@ Deployment 生产环境中部署你的神经网络模型
 
 ![|600](files/Deployment.png)
 
+## Skewed datasets 倾斜数据集
+
+倾斜数据集：数据不平衡，比如检测一种罕见疾病，这种疾病只会在$0.5\%$的人身上出现，则整个数据集中$99.5\%$的样本标签为$y=0$，而只有$0.5\%$的样本标签为$y=1$，数据分布极其不均衡。而且会产生高准确率的神经网络（比如正确率$96.2\%$）反而不如直接输出$y=0$来得有效，但是我们显然不会用后者方式进行疾病的诊断。
+
+### Error metrics for skewed datasets
+
+A common pair of metrics is **Precision/Recall**
+
+采用**混淆矩阵**(Confusion matrix)：$2\times 2$ 的矩阵，横向轴表示Actual class（分别为1,0），纵向轴表示Predicted class（分别为1,0）。则$M_{11}$表示预测值和真实值都为1的一共有多少个，依此类推得到$M_{12}, M_{21}, M_{22}$。
+
+对这个$2 \times 2$矩阵的4个位置进行命名：
+- $M_{11}$: True positive
+- $M_{22}$: True negative
+- $M_{12}$: False positive
+- $M_{21}$: False negative
+
+| | 1 | 0 |
+|:---:|:---:|:---:|
+| 1 |True positive|False positive|
+| 0 |False negative|True negative|
+
+还以罕见病为例。
+
+$y=1$ in presence of rare class we want to detect.
+
+Confusion matrix为
+
+| | 1 | 0 |
+|:---:|:---:|:---:|
+| 1 | 15 | 5 |
+| 0 | 10 | 70 |
+
+两个有用的指标：
+
+1. **Precision** 精确率: of all patients where we predicted $y = 1$, what fraction actually have the rare disease?
+$$\text{Precision} = \frac{\text{True positives}}{\text{predicted positive}} = \frac{\text{True positives}}{\text{True positives + False positives}} = \frac{15}{15 + 5} = 0.75$$
+
+2. Recall 召回率: of all patients that usually have the rare disease, what fraction did we correctly detect as having it?
+$$\text{Recall} = \frac{\text{True positives}}{\text{actual positives}} = \frac{\text{True positives}}{\text{True positives + False negatives}} = \frac{15}{15 + 10} = 0.6$$
+
+*在信息检索领域，精确率和召回率又被称为**查准率**和**查全率***
+
+一个好的学习算法不仅要有高的准确率(accuracy)，也要有高的精确率(precision)和召回率(recall)。
+
+high precision 表示如果预测出一个患者患有这种罕见疾病，则这个患者大概率确实患病。
+high recall 表示如果一个患者患有这种罕见疾病，则算法大概率能够准确预测出患者有这种病。
+
+precision: 你认为的该类样本，有多少是准确的；
+recall: 该类样本有多少被找出来了
+
+### Trading off precision and recall
+
+以 Logistic Regression 为例
+- We raise the thresholds when we want to predict $y = 1$ (rare disease) only if **very confident**. 比如治疗对身体伤害很大或者费用很昂贵，此时只有在十分确定样本患病时才输出$y = 1$，宁可不治也不错治。**Raising the thresholds will result in higher precision but lower recall**（比如之前设置的阈值是$0.5$，即我们有$50\%$的把握猜对，而现在调整为$0.7$，即我们有$70\%$的把握猜对，把握更大了，猜对的可能性更高，则precision会更高；而在真正的total actual positive的样本中，由于阈值提高了，则认为是true positive的会减少，即recall会更低）. 
+- We lower the thresholds when we want to **avoid missing too many cases** of rare disease (when in doubt predict $y = 1$). 比如治疗对身体伤害不大或者费用很便宜，但是不治疗会造成严重的后果，所以要尽量应治尽治，宁可错治也不能不治。**Lowering the thresholds will result in lower precision but higher recall**.
+
+![|300](files/TradeoffPrecisionAndRecall.png)
+
+**F1 score**
+
+If you want to automatically trade-off precision and recall rather than have to do so yourself, there is another metric called the **F1 score** that is sometimes used to automatically **combine precision and recall** to help you pick the best value or best trade-off between the two.
+
+$$
+\begin{align*}
+\frac{1}{\text{F1 Score}} &= \frac{1}{2}\times(\frac{1}{\text{Precision}} + \frac{1}{\text{Recall}}) \\\\
+\Longrightarrow \qquad \text{F1 Score} &= 2\times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
+\end{align*}
+$$
+
+F1 score 越高，说明算法越好
