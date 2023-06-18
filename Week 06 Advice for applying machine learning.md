@@ -105,7 +105,7 @@ $$J_\text{test}(\vec{w},b) = \frac{1}{2m_\text{test}}\sum_{i=1}^{m_\text{test}}(
  
 *好比三个人参加比赛，训练集就是训练三个人的比赛能力到最优，验证集就是赛前模拟测试决定最佳人选去参加比赛，测试集就是正式参加比赛量化能力值*
 
-## Bias and variance
+## Bias and variance 偏差与方差
 
 ### Diagnosing bias and variance
 
@@ -229,7 +229,7 @@ A --> B --> C --> A
 ![|600](files/BuildingASpamClassifier.png)
 ![|600](files/BuildingASpamClassifier2.png)
 
-### Error Analysis
+### Error Analysis 误差分析
 
 除了bias和variance这两个方面来评估模型，error analysis也是一种有效的评估手段。
 
