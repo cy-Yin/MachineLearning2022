@@ -86,7 +86,7 @@ $$H = − p_1*\log_2(p_1) − p_0*\log_2(p_0)$$
 
 50%:50%时，数据纯度最低，熵为1；而全是猫或者全不是猫时，数据纯度最高，熵为0
 
-### Choosing a split: Information Gain
+### Choosing a split: Information Gain 信息增益
 
 在构建决策树时，我们决定在节点上拆分哪个特征的方式是基于选择该特征能够使得熵最小，即数据纯度最高
 
@@ -108,7 +108,26 @@ $$
 
 ### Putting it together
 
+构建 Decision tree 的完整过程
+- Start with all examples at the root node
+- Calculate information gain for all possible features, and pick the one with the highest information gain
+- Split dataset according to selected feature, and create left and right branches of the tree
+- Keep repeating splitting process until stopping criteria is met (recursive splitting 递归) : 
+	- When a node is $100\%$ one class
+	- When splitting a node will result in the tree exceeding a maximum depth
+	- Information gain from additional splits is less than threshold
+	- When number of examples in a node is below a threshold
 
+最大深度(maximum depth)的选择有点像拟合更高阶的多项式或者训练更大的神经网络。它让决策树学习更加复杂的模型。但是也会有过拟合的风险。
+可以使用如 cross validation 的方法选择最大深度等等参数的值
+
+### One-hot encoding 独热编码
+
+Using one-hot encoding of categorical features
+
+目前的例子中，每个特征只选择两个可能值中的一个。但是特征显然可以有两个以上的离散值供选择，可以使用 one-hot 编码来解决这个问题
+
+在上面的例子中，我们对于有三个离散值的 Ear shape 的特征，选择创建三个新的特征：Pointy ears, Floppy ears, Oval ears。
 
 ## Tree ensembles 树集成
 
@@ -135,7 +154,7 @@ For b from 1 to B:
 Let the B-num trees vote to decide the classification of the new example
 ```
 
-*注：构建决策树的数量`B`可以选择大约在100个左右（建议使用64到228中的任何一个值）*
+*注：构建决策树的数量 `B` 可以选择大约在 100 个左右（建议使用 64 到 228 中的任何一个值）*
 
 这种构建决策树的方式有时也叫做 Bagged decision tree
 
@@ -145,7 +164,7 @@ Let the B-num trees vote to decide the classification of the new example
 
 At each node, when choosing a feature to use to split, if $n$ features are available, pick a random subset of $k < n$ features and allow the algorithm to only choose from that subset of features.
 
-即：不从所有特征中选择信息增益最高的那个，而是从$n$个特征中随机选择$k$个特征，从这$k$个特征中算法计算出信息增益最高的那个，这样可以使得选择的特征不至于趋同。
+即：不从所有特征中选择信息增益最高的那个，而是从 $n$ 个特征中随机选择 $k$ 个特征，从这 $k$ 个特征中算法计算出信息增益最高的那个，这样可以使得选择的特征不至于趋同。
 
-当$n$很大时，一个可行的选择是 
+当 $n$ 很大时，一个可行的选择是 
 $$k = \sqrt{n}$$
