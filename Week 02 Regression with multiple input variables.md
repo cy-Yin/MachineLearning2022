@@ -27,7 +27,7 @@ Model:
 
 **Multiple Linear Regression!!!**
 
-### A very useful idea: **Vectorization**
+### A very useful idea: **Vectorization** 向量化
 
 *注意：*
 - *linear algebra: count from 1: $x_1$, $x_2$, $x_3$ ...*
@@ -56,7 +56,7 @@ f = np.dot(w, x) + b
 
 Vectorization will make a huge difference in the running time of your learning algorithm.
 
-## Gradient Descent for Multiple Regression
+## Gradient Descent for Multiple Regression 梯度下降
 
 - previous notation: simultaneously update
 $$

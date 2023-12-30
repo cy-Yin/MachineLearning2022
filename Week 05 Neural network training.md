@@ -63,7 +63,7 @@ g(z) = \max(0, z) =
 \right.
 $$
 
-这个激活函数被命名为**ReLU**函数，是rectified linear unit的缩写。
+这个激活函数被命名为**ReLU**函数，是rectified linear unit（线性整流函数）的缩写。
 
 也有**线性激活函数**（其实相当于没有用任何激活函数）：
 $$g(z) = z$$
