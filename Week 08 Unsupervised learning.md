@@ -7,7 +7,7 @@
 在 supervised learning 中，我们有一个包含 input features $x$ 和 the labels $y$ 的数据集； 
 然而，在 unsupervised learning 中，我们得到的数据集只有 $x$ ，而没有目标标签 $y$ 。
 
-Clustering means looking at the dataset $\{x^{(1)}, x^{(2)}, x^{(3)}, \cdots, x^{(m)}\}$ and trying to see if it can be grouped into clusters. ^6819ae
+Clustering means looking at the dataset $\{x^{(1)}, x^{(2)}, x^{(3)}, \cdots, x^{(m)}\}$ and trying to see if it can be grouped into clusters. 
 
 Clustering 算法的相关应用
 - Grouping similar news
@@ -92,4 +92,28 @@ Pick set of clusters that gave lowest cost J
 ```
 
 #### Choosing the number of Clusters
+
+**Elbow method**: 
+选取不同的 $k$ 的值（即不同的cluster的数量），绘制 Cost function 关于 $k$ 的函数。一般来说随着选取的 cluster 的数量的增多，Cost function 会下降，选取下降速率开始明显变缓的点作为我们要的 $k$ 的值（形象地认为这类似“肘部”的形状，故称为 ellbow method）
+
+Evaluate K-means based on a metric for how well it performs for that later purpose.
+
+## Anomaly Detection 异常检测算法
+
+异常检测算法查看未标记的正常事件数据集，从而学会检测或发出危险信号如果有异常事件。
+
+### Finding unusual events -- Density estimation 密度估计
+
+例如：检测新的飞机引擎是否正常，通过之前 $m$ 架飞机的引擎的参数 $\{x_1, x_2\}$ 进行判断
+
+![|600](files/AnomalyDetectionExample.png)
+
+**Density estimation** 密度估计 （在 Fraud Detection 中频繁使用）：
+1. $x^{(i)} =$ Features of user $i$'s activities
+2. Build Model $p(x)$ from data
+3. Identify unusual users by checking which have $p(x) < \varepsilon$
+
+*即根据已有数据建立一个模型评估好事件的概率，当置信度过低时认为是异常事件并抛出预警*
+
+该检测通常用于金融分析假账户欺诈交易、网站判定是否是机器人的CAPTCHA等等
 
