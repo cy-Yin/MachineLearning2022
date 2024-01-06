@@ -101,8 +101,8 @@ Evaluate K-means based on a metric for how well it performs for that later purpo
 ## Anomaly Detection 异常检测算法
 
 异常检测算法查看未标记的正常事件数据集，从而学会检测或发出危险信号如果有异常事件。
-
-### Finding unusual events -- Density estimation 密度估计
+### Preparation
+#### Finding unusual events -- Density estimation 密度估计
 
 例如：检测新的飞机引擎是否正常，通过之前 $m$ 架飞机的引擎的参数 $\{x_1, x_2\}$ 进行判断
 
@@ -116,4 +116,87 @@ Evaluate K-means based on a metric for how well it performs for that later purpo
 *即根据已有数据建立一个模型评估好事件的概率，当置信度过低时认为是异常事件并抛出预警*
 
 该检测通常用于金融分析假账户欺诈交易、网站判定是否是机器人的CAPTCHA等等
+
+#### Gaussian (Normal) Distribution 高斯分布
+
+均值 $\mu$ ；方差 $\sigma^2$ （或者说 $\sigma$ 为标准差） 
+$$p(x) = \frac{1}{\sqrt{2\pi}\sigma}e^{{-\frac{(x-\mu)^2}{2\sigma^2}}}$$
+
+给定一个数据集 $\{x^{(1)}, x^{(2)}, \cdots , x^{(m)}\}$ ，则计算 $\mu$ 和 $\sigma^2$ 如下： 
+$$
+\begin{align*}
+\mu &= \frac{1}{m}\sum_{i=1}^{m} x^{(i)} \\
+\sigma^2 &= \frac{1}{m}\sum_{i=1}^{m} (x^{(i)} - \mu)^2
+\end{align*}
+$$
+
+### Anomaly Detection Algorithm
+
+考虑一个训练集 $\{x^{(1)}, x^{(2)}, \cdots , x^{(m)}\}$ ，其中每个 $x^{(i)}$ 有 $n$ 个特征。
+
+建立概率模型 $p(\vec{x})$ ，其中 $\vec{x}$ 为 $n$ 维向量： $\vec{x} = [x_1, x_2, \cdots, x_n]^T$ ，
+认为这 $n$ 个分量统计上互相独立 $p(\vec{x}) = p(x_1) \times p(x_2) \times \cdots \times p(x_n)$ 。
+
+对于每一个 $p(x_i)$ ，用 Gaussian Distribution 去估计它 $p(x_i) = p(x_i; \mu_i, \sigma^2_i)$ 
+
+则算法的最终步骤如下：
+1. Choose $n$ features $x_i$ that you think might be indicative of anomalous examples.
+2. Fit parameters $\mu_1, \mu_2, \cdots , \mu_n ; \sigma^2_1, \sigma^2_2, \cdots, \sigma^2_n$ 
+$$\begin{align*}
+\mu_j &= \frac{1}{m}\sum_{i=1}^{m} x^{(i)}_j \\
+\sigma^2_j &= \frac{1}{m}\sum_{i=1}^{m} (x^{(i)}_j - \mu_j)^2
+\end{align*}$$ 
+3. Given a new example $x$, compute $p(x)$: 
+$$
+p(x) = \prod_{j=1}^{n} p(x_j; \mu_j, \sigma^2_j) = \prod_{j=1}^{n}\frac{1}{\sqrt{2\pi}\sigma_j}\exp\left(-\frac{(x_j - \mu_j)^2}{2\sigma^2_j}\right)
+$$
+
+4. Anomaly if $p(x) < \varepsilon$
+
+### Developing and evaluating an anomaly detection system
+
+Assume $y=0$ if normal, $y=1$ if anomalous
+
+Training set: $\{x^{(1)}, x^{(2)}, \cdots , x^{(m)}\}$ (assume normal examples / not anomalous, namely $y^{(i)} = 0, i=1,2 \cdots m$) 全部好的数据，当然不小心涵盖一两个异常数据也没有关系
+
+评估 Anomaly Detection 系统： 
+
+创建 Cross validation set: $(x_{cv}^{(1)}, y_{cv}^{(1)}), (x_{cv}^{(2)}, y_{cv}^{(2)}), \cdots, (x_{cv}^{(m_{cv})}, y_{cv}^{(m_{cv})})$ 
+创建 Test set: $(x_{test}^{(1)}, y_{test}^{(1)}), (x_{test}^{(2)}, y_{test}^{(2)}), \cdots, (x_{test}^{(m_{test})}, y_{test}^{(m_{test})})$ 
+注意交叉验证集和测试集中需要包含一些 anomalous examples，一般来说异常数据要比正常数据的数量小得多
+
+在交叉验证集上调整参数 $\varepsilon$ ，使得算法更加可靠，然后再在测试集上测试
+
+或者，也可以不使用测试集，全部合并到交叉验证集中完成验证和测试的任务
+
+### Anomaly detection vs. supervised learning
+
+在之前的异常检测中，我们可以认为 training set 实际上有输出标签 $y=0$，加上验证集和测试集中带有的标签，似乎可以认为这是一个带输出的 supervised learning 的问题。那为什么还需要用 unsupervised learning 的 anomaly detection呢？现在来讨论什么时候用异常检测，什么时候用监督学习。
+
+适用 Anomaly Detection ：
+1. 很少 positive examples ($y=1$) 和大量 negative examples ($y=0$) 
+2. Many different "types" of anomalies. Hard for any algorithm to learn from positive examples what the anomalies look like; future anomalies may look nothing like any of the anomalous examples we have seen so far. 算法无法预测未来的异常值应该什么样
+适用 Supervised Learning ：
+1. positive examples 和 negative examples 的数目都很多
+2. Enough positive examples for algorithms to get a sense of what positive examples are like, future positive examples likely to be similar to ones in training set. 算法可以预测未来的异常值应该什么样
+
+Examples:
+![|650](files/AnomalyDetectionVersusSupervisedLearning.png)
+
+*Anomaly detection tries to find brand new positive examples that may be unlike anything you have seen before. Whereas supervised learning looks at your positive examples and tries to decide if a future example is similar to the positive examples that you've already seen.*
+
+### Choosing what features to use
+
+仔细选择特征对于异常检测比对于监督学习来说更加重要
+
+1. Non-gaussian features 
+一个方法是保证选择的特征的数据是Gauss分布的，对于 Non-gaussian features ，可以更改它使其更加符合 Gaussian Distribution ，比如对于特征 $x_i$ ，构造 $\log(x_i + C)$ 、 $\sqrt{x_i}$ 等等
+
+![|500](files/AnomalyDetectionNongaussianFeatures.png)
+
+2. Error analysis for anomaly detection 
+在异常检测中，我们想要 $p(x) \geq \varepsilon$ large for normal examples $x$ 以及 $p(x) < \varepsilon$ small for anomalous examples $x$ 。但是我们常常遇到的情况是 p(x) is comparable (say, both large) for normal and anomalous examples。此时可以进行的方法是新增一个特征 $x_{n+1}$ ，在这个特征下 $p(x_{n+1}^{(i)})$ 很小导致 $p(x^{(i)})$ 很小，使得算法能够分辨出这个异常值。这个特征可以是新发现的一个角度，也可以是从之前的特征组合起来发现可以用于异常检测的新特征。
+
+Example: Monitoring computers in a date center 
+![|600](files/AnomalyDetectionErrorAnalysisExample.png)
 
