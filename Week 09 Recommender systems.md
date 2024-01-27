@@ -307,15 +307,18 @@ Reconstruction: 对于新的数据，需要能够大致还原到原来的初始�
 #### Scikit-learn implementation for PCA
 
 用 Scikit-learn 库实现
+```Python
+from sklearn.decomposition import PCA
+```
 
-预处理：特征缩放（与均值归一化）（ scikit-learn 中的 `fit` 方法自动执行均值的归一化过程，所以我们只需要进行 feature scaling）
+预处理：特征缩放（与均值归一化）（ scikit-learn 库的 PCA model 中的 `fit` 方法自动执行均值的归一化过程，所以我们只需要进行 feature scaling ）
 
 1. "fit" the data to obtain 2 (or 3) new axes (principal components): 
-	- **`sklearn.fit` method (includes mean normalization)**
+	- **`fit` method (includes mean normalization)**
 2. Optionally examine how much variance is explained by each principal component 可以使了解将数据投影到这些轴上是否有助于保留原始数据集中的大部分信息：
-	- **`sklearn.explained_variance_ratio_` method**
+	- **`explained_variance_ratio_` method**
 3. Transform (project) the data onto the new axes 将数据投影到新主成分轴：
-	- **`sklearn.transform` method**
+	- **`transform` method**
 
 例如，对于一个二维数据集
 ```Python
@@ -326,7 +329,7 @@ X = np.array([[1, 1], [2, 1], [3, 2],
 ```Python
 pca_1 = PCA(n_components=1) # 1 principal component
 pca_1.fit(X)
-print(pca_1.explained_variance_ratio_) # 0.992, which means it captures 99.2% variable information
+print(pca_1.explained_variance_ratio_) # array([0.992]), which means it captures 99.2% variable information
 
 X_trans_1 = pca_1.transform(X)
 X_reduce_1 = pca.inverse_transform(X_trans_1)
@@ -344,7 +347,7 @@ print(X_trans_1)
 ```Python
 pca_2 = PCA(n_components=2) # 2 principal components
 pca_2.fit(X)
-print(pca_2.explained_variance_ratio_) # 0.992, 0,008, which means the first and the second principal component axis capture 99.2% and 0.8% variable information respectively
+print(pca_2.explained_variance_ratio_) # array([0.992, 0,008]), which means the first and the second principal component axis capture 99.2% and 0.8% variable information respectively
 
 X_trans_2 = pca_2.transform(X)
 X_reduce_2 = pca.inverse_transform(X_trans_2)
