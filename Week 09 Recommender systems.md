@@ -3,9 +3,9 @@
 例如：predicting movie ratings
 ![|650](files/RecommenderSystemExamplePredictingMovieRatings.png)
 
-### Collaborative filtering 协同过滤
+## Collaborative filtering 协同过滤
 
-#### Use per-item features
+### Use per-item features
 
 如果我们拥有每个 item 的特征，我们如何开发一个 recommender system？（例如，对于前面的 predicting movie ratings 的例子，假设我们已经知道每部电影的标签，比如 Love at last 有 90% 与 romance 相关，而与 action 完全不相关）
 ![|650](files/RecommenderSystemExamplePredictingMovieRatingsPerItemFeatures.png)
@@ -37,7 +37,7 @@ J(w, b) &= \sum_{j=1}^{n_u} J_j(\vec{w}^{(j)}, b^{(j)}) \\
 \end{align*}
 $$
 
-#### Collaborative filtering algorithm
+### Collaborative filtering algorithm
 
 下面我们来看如果事先不知道 items 的特征，如何用**协同过滤算法**从数据中学习或得出这些特征 $\{x_1, x_2, \cdots , x_n\}$ 进行构建 Recommender System （假设我们此时知道偏好参数 $\{\vec{w}^{(1)}, b^{(1)}; \vec{w}^{(2)}, b^{(2)}; \cdots ; \vec{w}^{(n_u)}, b^{(n_u)}\}$ ）。
 
@@ -88,7 +88,7 @@ x^{(j)}_k &\leftarrow x^{(j)}_k-\alpha*\frac{\partial}{\partial x^{(j)}_k}J(w,b;
 \end{align*}
 $$
 
-#### Binary labels 二元标签
+### Binary labels 二元标签
 
 Recommender system 或 Collaborative filtering 通常给的选项不是 1~5 评级或推荐度，它们通常会给出是否推荐、是否喜欢给用户选择，这称为**二进制标签** (Binary labels)。
 
@@ -111,13 +111,13 @@ $$
 J(w,b;x) = \sum_{(i,j):r(i,j)=1}\mathcal{L}(f_j(x^{(i)}), y^{(i,j)})
 $$
 
-#### Mean normalization 均值归一化
+### Mean normalization 均值归一化
 
 将已评分的数据作为矩阵，每行做平均提取出每个电影目前的平均分作为均值，形成均值向量 $\mu$ ，然后将所有的分数做均值化处理（即减去均值）再做预测，预测出的 $y^{(i,j)}$ 再加上均值 $\mu_i$ 即可
 ![|550](files/RecommenderSystemsMeanNormalizationFig1.png)
 ![|550](files/RecommenderSystemsMeanNormalizationFig2.png)
 
-#### TensorFlow implementation for Collaborative filtering 
+### TensorFlow implementation for Collaborative filtering 
 
 ```Python
 w = tf.Variable(initial_set)
@@ -168,7 +168,7 @@ for iter in range(iterations):
 	optimizer.apply_gradients(zip(grads, [X, W, b]))
 ```
 
-#### Finding related items
+### Finding related items
 
 The features $x^{(i)}$ of item $i$ are quite hard to interpret. 
 To find other items related to it, find item $k$ with $x^{(k)}$ similar to $x^{(i)}$ 
@@ -182,16 +182,16 @@ Collaborative filtering 的限制
 - Item: Genre, movie stars, studio, ...
 - User: Demographics (age, gender, location), expressed preferences, ...
 
-### Content-based filtering 基于内容过滤
+## Content-based filtering 基于内容过滤
 
-#### Collaborative filtering v.s. Content-based filtering
+### Collaborative filtering v.s. Content-based filtering
 
 - Collaborative filtering 协同过滤：
 根据 rating of users who gave similar ratings as you 给你推荐特定的 items
 - Content-based filtering 基于内容过滤：
 根据 features of user 和 features of items 的特征找到好的匹配项，并将符合的 item 推荐给你
 
-#### Deep learning for content-based filtering 
+### Deep learning for content-based filtering 
 
 之前说是否将某一个 item 推荐给某一个 user 是通过对两者的特征计算它们匹配的程度。那么如何 learn to match: 
 假设要推荐电影给你。对于 user $j$ 有 feature 向量 $x_u^{(j)}$ ，向量中的每一个分量代表对 user 分析出的一个特征的值。同样的，对于 movie $i$ 有 feature 向量 $x_m^{(i)}$ 。*注意 $x_u^{(j)}$ 和 $x_m^{(i)}$ 的长度可以完全不同，两者完全无关。*
@@ -221,7 +221,7 @@ $$J = \sum_{(i,j):r(i,j)=1}\left(v_u^{(j)} \cdot v_m^{(i)} - y^{(i,j)}\right)^2 
 
 To find movies similar to movie $i$ : $||v_m^{(k)} - v_m^{(i)}||^2$ small （两点距离衡量相似程度）
 
-#### Recommending from a large catalogue
+### Recommending from a large catalogue
 
 如果要从成千上万的 items 中挑选出少数推荐或展现给用户，对于每一个 item 构建一个 neural network 的计算开销太过庞大，下面我们对这个算法进行优化，使其能够更加有效地达到效果。
 
@@ -242,7 +242,7 @@ Two step: Retrieval & Ranking
 
 *检索时给出更多项目加入列表会获得 better performance but slower recommendations ，此时最好的方法就是事先试验出哪种检索方法的效果最好*
 
-#### TensorFlow implementation for Content-based filtering
+### TensorFlow implementation for Content-based filtering
 
 ```Python
 # Create the user network and item network
@@ -276,17 +276,17 @@ model = Model([input_user, input_item], output)
 cost_fn = tf.keras.losses.MeanSquaredError()
 ```
 
-### Principal Component Analysis (PCA) 主成分分析
+## Principal Component Analysis (PCA) 主成分分析
 
 常用于可视化数据：将多维特征降到2～3维，使得可以进行数据的可视化
 
-#### Reducing the number of features
+### Reducing the number of features
 
 找到一个或多个新的轴 z，使得可以用更少的数字来反映特征
 
 *reduce 50 "dimensional" data to 2D data*
 
-#### PCA Algorithm
+### PCA Algorithm
 
 预处理：
 1. 将特征归一化使得平均值为0
@@ -304,7 +304,7 @@ cost_fn = tf.keras.losses.MeanSquaredError()
 
 Reconstruction: 对于新的数据，需要能够大致还原到原来的初始值。通过乘上单位向量的分量，可以得到原数据点的投影点在原多维空间中的坐标，这称为 reconstruction 过程。
 
-#### Scikit-learn implementation for PCA
+### Scikit-learn implementation for PCA
 
 用 Scikit-learn 库实现
 ```Python
@@ -357,6 +357,6 @@ X_reduce_2 = pca.inverse_transform(X_trans_2)
 
 *除了特征的可视化之外，PCA方法还广泛应用于数据压缩（减少占用空间和传输成本）、加速监督学习模型的训练*
 
-### Ethical use of recommender systems
+## Ethical use of recommender systems
 
 Recommender systems 有时也会对社会造成损害，在构建时需要慎重为之，考虑其可能带来的道德问题。
