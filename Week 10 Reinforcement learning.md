@@ -144,13 +144,13 @@ $$s = (x, y, z, \theta, \phi, \beta, \dot{x}, \dot{y}, \dot{z}, \dot{\theta}, \d
 $$s = (x, y, \dot{x}, \dot{y}, \theta, \dot{\theta}, l, r)^T$$
 其中 $l, r$ 是取 0 或 1 的二进制值，刻画登陆器的左/右脚是否着地。
 Reward function 如下：
-- Getting to landing pad -- $x = 100 \text{-} 140$ .
-- Additional reward for moving toward/away from pad.
-- Crash: -100
-- Soft landing: +100
-- Leg grounded: +10
-- Fire main engine: -0.3 (to save the energy)
-- Fire side thruster: -0.03 (to save the energy)
+- Landing on the landing pad and coming to rest is about 100~140 points.
+- If the lander moves away from the landing pad, it loses reward. 
+- If the lander crashes, it receives -100 points.
+- If the lander comes to rest, it receives +100 points.
+- Each leg with ground contact is +10 points.
+- Firing the main engine is -0.3 points each frame (to save the energy).
+- Firing the side engine is -0.03 points each frame (to save the energy).
 ### State-action value function
 
 Deep Reinforcement Learning 的核心是输入 current state $s$ 和 current action $a$ 进入神经网络并计算或估计 $Q(s, a)$ 
